@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Backbone</title>
+</head>
+<style>
+	.editInput {
+		display: none;
+	}
+
+	.editing .editInput {
+		display: inline-block;
+	} 
+
+	.editing span {
+		display: none;
+	} 
+
+
+</style>
+<body>
+
+
+
+
+<form id="addTask" action="">	
+	<input type="text" placeholder="Add new task" />
+	<input type="submit" value="Save Task">
+</form>
+
+<div class="tasks">
+	
+	<script id="taskTemplate" type="text/template">
+	<span><%= title %></span> <input class='editInput' type="text"/> <button class="delete">Delete</button> 
+	</script>
+
+</div>
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<!-- Underscore -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore.js"></script>
+
+<!-- Backbone -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone.js"></script>
+
+<!-- Firebase -->
+<script src="https://cdn.firebase.com/js/client/2.0.3/firebase.js"></script>
+
+<!-- BackboneFire -->
+<script src="https://cdn.firebase.com/libs/backbonefire/0.5.1/backbonefire.js"></script>
+
+<script type="text/javascript" src="main.js"></script>
+</body>
+</html>
