@@ -18,8 +18,9 @@
 
 	App.Models.Task = Backbone.Model.extend({
 		defaults: {
-			title: 'Default title',
+			title: '',
 		  priority: 0,
+		  completed: false
 	  }		
 	});
 
@@ -75,6 +76,10 @@
 
 		template: template('taskTemplate'),
 
+		initialize: function() {
+	    this.listenTo(this.model, "change", this.render);
+	  }
+
 		events: {
 			"dblclick span": "edit",
 			'keypress .editInput': 'updateOnEnter',
@@ -129,7 +134,10 @@
 	*
 	*******************/
 
-	App.Collections.Tasks = Backbone.Collection.extend({ model: App.Models.Task });
+	App.Collections.Tasks = Backbone.Firebase.Collection.extend({
+	  url: 'https://myfirsttodo.firebaseio.com/todos',	  
+	  model: App.Models.Task 
+	});
 
 	/******************
 	*
@@ -137,20 +145,22 @@
 	*
 	*******************/
 
-	window.taskCollection = new App.Collections.Tasks([
-		{
-			title: "Task 1",
-			priority: 2
-		},
-		{
-			title: "Task 2",
-			priority: 3
-		},
-		{
-			title: "Another Task",
-			priority: 5
-		}
-	]);
+	window.taskCollection = new App.Collections.Tasks;
+	// window.taskCollection.create([
+	// 	{
+	// 		title: "Task 1",
+	// 		priority: 2
+	// 	},
+	// 	{
+	// 		title: "Task 2",
+	// 		priority: 3
+	// 	},
+	// 	{
+	// 		title: "Another Task",
+	// 		priority: 5
+	// 	}
+	// ]);
+	window.taskCollection.fetch();
 
 	window.tasksView = new App.Views.Tasks({
 		collection: taskCollection
