@@ -5,6 +5,7 @@
 	<title>Backbone</title>
 </head>
 <style>
+
 	.editInput {
 		display: none;
 	}
@@ -17,23 +18,22 @@
 		display: none;
 	} 
 
-
 </style>
 <body>
 
+<div id="app">
 
-
-
-<form id="addTask" action="">	
 	<input type="text" placeholder="Add new task" />
-	<input type="submit" value="Save Task">
-</form>
+	<button id="addTask">Save Task</button>
 
-<div class="tasks">
-	
-	<script id="taskTemplate" type="text/template">
-	<span><%= title %></span> <input class='editInput' type="text"/> <button class="delete">Delete</button> 
-	</script>
+
+	<ul class="tasks">
+		
+		<script id="taskTemplate" type="text/template">
+		<span><%= title %></span> <input class='editInput' type="text"/> <button class="delete">Delete</button> 
+		</script>
+
+	</ul>
 
 </div>
 

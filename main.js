@@ -30,30 +30,31 @@
 	*
 	*******************/
 
-	App.Views.AddTask = Backbone.View.extend({
+	// App.Views.AddTask = Backbone.View.extend({
 
-  	el: '#addTask',
+ //  	el: '#addTask',
 
-  	events: {
-  		'submit': 'submit'
-  	},  	
+ //  	events: {
+ //  		'submit #addTask': 'submit'
+ //  	},  	
 
-  	submit: function(e) {
-  		e.preventDefault();
-  		var newTaskTitle = $(e.currentTarget).find('input[type=text]').val();
-  		$(e.currentTarget).find('input[type=text]').val('');
-  		var task = new App.Models.Task({ title: newTaskTitle });
-  		this.collection.add(task);  		
-  	},
+ //  	submit: function(e) {
+ //  		e.preventDefault();
+ //  		var newTaskTitle = $(e.currentTarget).find('input[type=text]').val();
+ //  		$(e.currentTarget).find('input[type=text]').val('');
+ //  		var task = new App.Models.Task({ title: newTaskTitle });
+ //  		this.collection.add(task);  		
+ //  	},
 
-  });
+ //  });
 
 	App.Views.Tasks = Backbone.View.extend({
 
-		tagName: 'ul',
+		el: $('#app'),
 
 		initialize: function() {
 			this.collection.on('add', this.addOne, this);
+			this.list = this.$(".tasks");
 		},
 
 		render: function() {
@@ -64,9 +65,24 @@
   	addOne: function(task) {
   		// create a new child view
   		var taskView = new App.Views.Task({ model: task });
-  		// append to the root ul element  		
-  		this.$el.append(taskView.render().el);  		
-  	}
+  		// append to the root ul element
+  		console.log(this.list);
+  		console.log(taskView.render().el);	
+  		this.list.append(taskView.render().el);  		
+  	},
+
+  	events: {
+  		'click #addTask': 'submit'
+  	},  	
+
+  	submit: function(e) {
+  		console.log('click');
+  		var newTaskTitle = $(e.currentTarget).find('input[type=text]').val();
+  		$(e.currentTarget).find('input[type=text]').val('');
+  		// var task = new App.Models.Task({ title: newTaskTitle });
+  		// this.collection.add(task);
+  		this.collection.create({ title: newTaskTitle });
+  	},
 
 	});
 
@@ -78,7 +94,14 @@
 
 		initialize: function() {
 	    this.listenTo(this.model, "change", this.render);
-	  }
+	  },
+
+	  render: function() {
+			var template =  this.template( this.model.toJSON() );
+			this.$el.html( template );
+			this.$input = this.$('.editInput');	
+			return this;
+		},
 
 		events: {
 			"dblclick span": "edit",
@@ -117,14 +140,7 @@
 			this.$el.removeClass('editing');
 
 			this.render();
-		},
-
-		render: function() {
-			var template =  this.template( this.model.toJSON() );
-			this.$el.html( template );
-			this.$input = this.$('.editInput');	
-			return this;
-		}, 
+		},		 
 
 	});
 
@@ -166,7 +182,7 @@
 		collection: taskCollection
 	});
 
-	var addTaskView = new App.Views.AddTask({ collection: taskCollection });
+	// var addTaskView = new App.Views.AddTask({ collection: taskCollection });
 
 	$('.tasks').append(tasksView.render().el);
 		
