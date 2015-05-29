@@ -23,17 +23,15 @@
 
 <div id="app">
 
-	<input type="text" placeholder="Add new task" />
+	<input id="addTaskInput" type="text" placeholder="Add new task" />
 	<button id="addTask">Save Task</button>
 
 
-	<ul class="tasks">
-		
-		<script id="taskTemplate" type="text/template">
-		<span><%= title %></span> <input class='editInput' type="text"/> <button class="delete">Delete</button> 
-		</script>
+	<ul class="tasks"></ul>
 
-	</ul>
+	<script id="taskTemplate" type="text/template">
+	<span><%= title %></span> <input class='editInput' type="text"/> <button class="delete">Delete</button> 
+	</script>
 
 </div>
 

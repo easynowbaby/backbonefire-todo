@@ -53,8 +53,12 @@
 		el: $('#app'),
 
 		initialize: function() {
-			this.collection.on('add', this.addOne, this);
+			this.collection.on('add', this.addOne, this);			
 			this.list = this.$(".tasks");
+		},
+
+		hello: function() {
+			console.log('hello')
 		},
 
 		render: function() {
@@ -62,25 +66,34 @@
   		return this;
   	},
 
+  	rerender: function() {
+  		this.list.empty();
+  		this.collection.each(this.addOne, this);  		
+  		return this;
+  	},
+
   	addOne: function(task) {
   		// create a new child view
-  		var taskView = new App.Views.Task({ model: task });
-  		// append to the root ul element
-  		console.log(this.list);
-  		console.log(taskView.render().el);	
+  		var taskView = new App.Views.Task({ model: task });  		
+  		// append to the root ul element  		
   		this.list.append(taskView.render().el);  		
   	},
 
   	events: {
-  		'click #addTask': 'submit'
-  	},  	
+  		'click #addTask': 'submit',
+  		'click .delete': 'delete' 		
+  	},  
+
+  	delete: function(e) {
+  		var taskTitle = $(e.target).siblings('span').html();
+  		this.collection.remove(this.collection.where({title: taskTitle}));  		
+  		this.rerender();
+		},	
 
   	submit: function(e) {
   		console.log('click');
-  		var newTaskTitle = $(e.currentTarget).find('input[type=text]').val();
-  		$(e.currentTarget).find('input[type=text]').val('');
-  		// var task = new App.Models.Task({ title: newTaskTitle });
-  		// this.collection.add(task);
+  		var newTaskTitle = $('#addTaskInput').val();
+  		$('#addTaskInput').val('');  		
   		this.collection.create({ title: newTaskTitle });
   	},
 
@@ -106,8 +119,8 @@
 		events: {
 			"dblclick span": "edit",
 			'keypress .editInput': 'updateOnEnter',
-			'focusout .editInput': 'close'
-		},
+			'focusout .editInput': 'close'			
+		},		
 
 		edit: function() {
 			this.$el.addClass('editing');
@@ -161,30 +174,11 @@
 	*
 	*******************/
 
-	window.taskCollection = new App.Collections.Tasks;
-	// window.taskCollection.create([
-	// 	{
-	// 		title: "Task 1",
-	// 		priority: 2
-	// 	},
-	// 	{
-	// 		title: "Task 2",
-	// 		priority: 3
-	// 	},
-	// 	{
-	// 		title: "Another Task",
-	// 		priority: 5
-	// 	}
-	// ]);
+	window.taskCollection = new App.Collections.Tasks;	
 	window.taskCollection.fetch();
-
 	window.tasksView = new App.Views.Tasks({
 		collection: taskCollection
 	});
-
-	// var addTaskView = new App.Views.AddTask({ collection: taskCollection });
-
-	$('.tasks').append(tasksView.render().el);
 		
 
 })();
