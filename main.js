@@ -28,25 +28,7 @@
 	*
 	*  Views
 	*
-	*******************/
-
-	// App.Views.AddTask = Backbone.View.extend({
-
- //  	el: '#addTask',
-
- //  	events: {
- //  		'submit #addTask': 'submit'
- //  	},  	
-
- //  	submit: function(e) {
- //  		e.preventDefault();
- //  		var newTaskTitle = $(e.currentTarget).find('input[type=text]').val();
- //  		$(e.currentTarget).find('input[type=text]').val('');
- //  		var task = new App.Models.Task({ title: newTaskTitle });
- //  		this.collection.add(task);  		
- //  	},
-
- //  });
+	*******************/	
 
 	App.Views.Tasks = Backbone.View.extend({
 
