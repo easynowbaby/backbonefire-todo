@@ -35,13 +35,10 @@
 		el: $('#app'),
 
 		initialize: function() {
-			this.collection.on('add', this.addOne, this);			
 			this.list = this.$(".tasks");
-		},
-
-		hello: function() {
-			console.log('hello')
-		},
+			this.collection.on('add', this.addOne, this);
+			this.collection.on('remove', this.rerender, this);	
+		},		
 
 		render: function() {
   		this.collection.each(this.addOne, this);  		
@@ -63,21 +60,27 @@
 
   	events: {
   		'click #addTask': 'submit',
-  		'click .delete': 'delete' 		
+  		'click .delete': 'delete',
+  		'keypress #addTaskInput': 'updateOnEnter',				 		
   	},  
 
   	delete: function(e) {
-  		var taskTitle = $(e.target).siblings('span').html();
-  		this.collection.remove(this.collection.where({title: taskTitle}));  		
-  		this.rerender();
+  		var taskTitle = $(e.target).siblings('span.title').html();
+  		this.collection.remove(this.collection.where({title: taskTitle}));
 		},	
 
-  	submit: function(e) {
-  		console.log('click');
+  	submit: function(e) {  		
   		var newTaskTitle = $('#addTaskInput').val();
+  		if (!newTaskTitle) return;
   		$('#addTaskInput').val('');  		
   		this.collection.create({ title: newTaskTitle });
   	},
+
+  	updateOnEnter: function(e) {
+			if (e.which === 13) {
+				this.submit();
+			}
+		},
 
 	});
 
@@ -92,6 +95,7 @@
 	  },
 
 	  render: function() {
+	  	this.model.attributes.completed ? this.$el.addClass('checked') : this.$el.removeClass('checked');
 			var template =  this.template( this.model.toJSON() );
 			this.$el.html( template );
 			this.$input = this.$('.editInput');	
@@ -99,9 +103,10 @@
 		},
 
 		events: {
-			"dblclick span": "edit",
+			"dblclick span.title": "edit",
 			'keypress .editInput': 'updateOnEnter',
-			'focusout .editInput': 'close'			
+			'focusout .editInput': 'close',
+			'click .check-mark' : 'toggleCheck'		
 		},		
 
 		edit: function() {
@@ -118,8 +123,7 @@
 		},
 
 		close: function() {
-			var value = this.$input.val();
-			console.log(value);
+			var value = this.$input.val();			
 			var trimmedValue = value.trim();
 			
 			if (!this.$el.hasClass('editing')) {
@@ -135,7 +139,12 @@
 			this.$el.removeClass('editing');
 
 			this.render();
-		},		 
+		},	
+
+		toggleCheck: function() {
+		this.model.get('completed') ? this.model.set({ completed: false }) : this.model.set({ completed: true });
+		//this.$el.hasClass('checked') ? this.$el.removeClass('checked') : this.$el.addClass('checked');		  
+		},	 
 
 	});
 
