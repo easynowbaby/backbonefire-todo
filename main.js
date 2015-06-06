@@ -113,7 +113,6 @@
 			this.$el.addClass('editing');
 			this.$el.find('input').val(this.model.toJSON().title);
 			this.$el.find('input').focus();
-			console.log(this.model.toJSON());
 		},
 
 		updateOnEnter: function(e) {
@@ -142,8 +141,7 @@
 		},	
 
 		toggleCheck: function() {
-		this.model.get('completed') ? this.model.set({ completed: false }) : this.model.set({ completed: true });
-		//this.$el.hasClass('checked') ? this.$el.removeClass('checked') : this.$el.addClass('checked');		  
+		  this.model.get('completed') ? this.model.set({ completed: false }) : this.model.set({ completed: true });	
 		},	 
 
 	});
@@ -166,7 +164,7 @@
 	*******************/
 
 	window.taskCollection = new App.Collections.Tasks;	
-	window.taskCollection.fetch();
+	window.taskCollection.fetch();  //fetch data from FB and use set on the collection
 	window.tasksView = new App.Views.Tasks({
 		collection: taskCollection
 	});
