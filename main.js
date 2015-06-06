@@ -28,45 +28,59 @@
 	*
 	*  Views
 	*
-	*******************/
-
-	App.Views.AddTask = Backbone.View.extend({
-
-  	el: '#addTask',
-
-  	events: {
-  		'submit': 'submit'
-  	},  	
-
-  	submit: function(e) {
-  		e.preventDefault();
-  		var newTaskTitle = $(e.currentTarget).find('input[type=text]').val();
-  		$(e.currentTarget).find('input[type=text]').val('');
-  		var task = new App.Models.Task({ title: newTaskTitle });
-  		this.collection.add(task);  		
-  	},
-
-  });
+	*******************/	
 
 	App.Views.Tasks = Backbone.View.extend({
 
-		tagName: 'ul',
+		el: $('#app'),
 
 		initialize: function() {
+			this.list = this.$(".tasks");
 			this.collection.on('add', this.addOne, this);
-		},
+			this.collection.on('remove', this.rerender, this);	
+		},		
 
 		render: function() {
   		this.collection.each(this.addOne, this);  		
   		return this;
   	},
 
+  	rerender: function() {
+  		this.list.empty();
+  		this.collection.each(this.addOne, this);  		
+  		return this;
+  	},
+
   	addOne: function(task) {
   		// create a new child view
-  		var taskView = new App.Views.Task({ model: task });
+  		var taskView = new App.Views.Task({ model: task });  		
   		// append to the root ul element  		
-  		this.$el.append(taskView.render().el);  		
-  	}
+  		this.list.append(taskView.render().el);  		
+  	},
+
+  	events: {
+  		'click #addTask': 'submit',
+  		'click .delete': 'delete',
+  		'keypress #addTaskInput': 'updateOnEnter',				 		
+  	},  
+
+  	delete: function(e) {
+  		var taskTitle = $(e.target).siblings('span.title').html();
+  		this.collection.remove(this.collection.where({title: taskTitle}));
+		},	
+
+  	submit: function(e) {  		
+  		var newTaskTitle = $('#addTaskInput').val();
+  		if (!newTaskTitle) return;
+  		$('#addTaskInput').val('');  		
+  		this.collection.create({ title: newTaskTitle });
+  	},
+
+  	updateOnEnter: function(e) {
+			if (e.which === 13) {
+				this.submit();
+			}
+		},
 
 	});
 
@@ -78,19 +92,27 @@
 
 		initialize: function() {
 	    this.listenTo(this.model, "change", this.render);
-	  }
+	  },
+
+	  render: function() {
+	  	this.model.attributes.completed ? this.$el.addClass('checked') : this.$el.removeClass('checked');
+			var template =  this.template( this.model.toJSON() );
+			this.$el.html( template );
+			this.$input = this.$('.editInput');	
+			return this;
+		},
 
 		events: {
-			"dblclick span": "edit",
+			"dblclick span.title": "edit",
 			'keypress .editInput': 'updateOnEnter',
-			'focusout .editInput': 'close'
-		},
+			'focusout .editInput': 'close',
+			'click .check-mark' : 'toggleCheck'		
+		},		
 
 		edit: function() {
 			this.$el.addClass('editing');
 			this.$el.find('input').val(this.model.toJSON().title);
 			this.$el.find('input').focus();
-			console.log(this.model.toJSON());
 		},
 
 		updateOnEnter: function(e) {
@@ -100,8 +122,7 @@
 		},
 
 		close: function() {
-			var value = this.$input.val();
-			console.log(value);
+			var value = this.$input.val();			
 			var trimmedValue = value.trim();
 			
 			if (!this.$el.hasClass('editing')) {
@@ -117,14 +138,11 @@
 			this.$el.removeClass('editing');
 
 			this.render();
-		},
+		},	
 
-		render: function() {
-			var template =  this.template( this.model.toJSON() );
-			this.$el.html( template );
-			this.$input = this.$('.editInput');	
-			return this;
-		}, 
+		toggleCheck: function() {
+		  this.model.get('completed') ? this.model.set({ completed: false }) : this.model.set({ completed: true });	
+		},	 
 
 	});
 
@@ -145,30 +163,11 @@
 	*
 	*******************/
 
-	window.taskCollection = new App.Collections.Tasks;
-	// window.taskCollection.create([
-	// 	{
-	// 		title: "Task 1",
-	// 		priority: 2
-	// 	},
-	// 	{
-	// 		title: "Task 2",
-	// 		priority: 3
-	// 	},
-	// 	{
-	// 		title: "Another Task",
-	// 		priority: 5
-	// 	}
-	// ]);
-	window.taskCollection.fetch();
-
+	window.taskCollection = new App.Collections.Tasks;	
+	window.taskCollection.fetch();  //fetch data from FB and use set on the collection
 	window.tasksView = new App.Views.Tasks({
 		collection: taskCollection
 	});
-
-	var addTaskView = new App.Views.AddTask({ collection: taskCollection });
-
-	$('.tasks').append(tasksView.render().el);
 		
 
 })();
